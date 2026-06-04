@@ -56,15 +56,16 @@ jobs:
         run: cd android && gradle clean || true
         continue-on-error: true
 
-      - name: Install Gradle (for wrapper)
+      - name: Download Gradle 8.4 and add to PATH
         run: |
-          sudo apt-get update
-          sudo apt-get install -y gradle
+          GRADLE_VERSION=8.4
+          wget https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip -O /tmp/gradle.zip
+          unzip -q /tmp/gradle.zip -d /tmp
+          echo "/tmp/gradle-${GRADLE_VERSION}/bin" >> $GITHUB_PATH
 
-      - name: Generate Gradle wrapper
+      - name: Generate Gradle wrapper (use downloaded Gradle)
         working-directory: android
-        run: |
-          gradle wrapper --gradle-version 8.4
+        run: gradle wrapper --gradle-version 8.4
 
       - name: Make Gradle wrapper executable
         run: chmod +x android/gradlew
